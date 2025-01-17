@@ -18,6 +18,7 @@
   <title>فۆرمی داواکردنی خواردن</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
   <style>
     body {
@@ -270,7 +271,7 @@
   </div>
 
   <div class="contact-info">
-    <p>بۆ پەیوەندیکردن پەنجە بنێ بە:</p>
+    <p>بۆ ناردن پەنجە بنێ بە:</p>
     <a href="https://wa.me/9647712555351" target="_blank">واتساپ: 07712555351</a><br>
     <a href="https://instagram.com/kawgir_" target="_blank">Kawgir_ Instagram</a>
   </div>
@@ -371,31 +372,30 @@
   document.getElementById('userDetails').style.display = 'block';
 }
 
-    function downloadWebshot() {
-  html2canvas(document.body, { scrollY: 0, useCORS: true }).then(canvas => {
-    const imgData = canvas.toDataURL('image/png');
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF();
+   function downloadWebshot() {
+  html2canvas(document.body, { scrollY: 0, useCORS: true, scale: 2 }).then(canvas => {
+    // Convert the canvas to a Blob (PNG image)
+    canvas.toBlob(blob => {
+      // Initialize a new ZIP file using JSZip
+      const zip = new JSZip();
 
-    // Adjust PDF dimensions to match the full canvas dimensions
-    const pageWidth = 210; // A4 width in mm
-    const pageHeight = 297; // A4 height in mm
-    const imgWidth = pageWidth;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      // Add the PNG image to the ZIP file
+      zip.file('webshot.png', blob);
 
-    let position = 0;
-    while (position < imgHeight) {
-      pdf.addImage(imgData, 'PNG', 0, -position, imgWidth, imgHeight);
-      position += pageHeight;
-      if (position < imgHeight) {
-        pdf.addPage();
-      }
-    }
+      // Generate the ZIP file and trigger the download
+      zip.generateAsync({ type: 'blob' }).then(function(content) {
+        // Create a download link for the ZIP file
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        link.download = 'kawgir_form.zip'; // Name of the ZIP file
+        link.click();
 
-    pdf.save('kawgir_form.pdf');
+        // Clean up the URL object
+        URL.revokeObjectURL(link.href);
+      });
+    }, 'image/png');
   });
 }
-
   </script>
 </body>
 </html>
