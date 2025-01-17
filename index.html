@@ -17,6 +17,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>فۆرمی داواکردنی خواردن</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -325,13 +327,30 @@
     }
 
     function downloadWebshot() {
-      html2canvas(document.body).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'form_screenshot.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-      });
+  html2canvas(document.body, { scrollY: 0, useCORS: true }).then(canvas => {
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+
+    // Adjust PDF dimensions to match the full canvas dimensions
+    const pageWidth = 210; // A4 width in mm
+    const pageHeight = 297; // A4 height in mm
+    const imgWidth = pageWidth;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    let position = 0;
+    while (position < imgHeight) {
+      pdf.addImage(imgData, 'PNG', 0, -position, imgWidth, imgHeight);
+      position += pageHeight;
+      if (position < imgHeight) {
+        pdf.addPage();
+      }
     }
+
+    pdf.save('form_screenshot.pdf');
+  });
+}
+
   </script>
 </body>
 </html>
