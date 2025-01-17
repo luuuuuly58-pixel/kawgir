@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ckb">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>فۆرمی داواکردنی خواردن</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: #f8f9f3;
+      color: #2e2e2e;
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+      direction: rtl;
+      text-align: right;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #2e2e2e;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      font-weight: bold;
+    }
+
+    h2 {
+      font-size: 2em;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      color: #2e2e2e;
+    }
+
+    input, select, button {
+      width: 100%;
+      max-width: 500px;
+      padding: 10px;
+      font-size: 1em;
+      color: #2e2e2e;
+      background: #fff;
+      border: 1px solid #416619;
+      border-radius: 5px;
+      transition: border 0.3s, box-shadow 0.3s;
+    }
+
+    input::placeholder {
+      text-align: right; /* Aligns placeholder text to the right */
+    }
+
+    input:focus, select:focus {
+      border-color: #416619;
+      box-shadow: 0 0 10px #416619;
+      outline: none;
+    }
+
+    button {
+      background: #416619;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    button:hover {
+      background: #314a14;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
+    }
+
+    .day-toggle {
+      padding: 10px 15px;
+      font-size: 1em;
+      color: #2e2e2e;
+      background: #e8f0e4;
+      border: 2px solid #416619;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.3s, color 0.3s;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .day-toggle.active {
+      background: #416619;
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .day-toggle:hover {
+      background: #98c682;
+      color: #fff;
+    }
+
+    .output {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f1f5ec;
+      border-radius: 10px;
+      border: 1px solid #416619;
+      color: #2e2e2e;
+      font-size: 1.2em;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: 0; /* Aligns the box to the right */
+    }
+
+    .output:empty {
+      display: none;
+    }
+
+    .time-select {
+      margin-top: 20px;
+      position: relative;
+    }
+
+    .time-select option.separator {
+      background-color: #ccc;
+      font-size: 0.9em;
+      font-style: italic;
+    }
+
+    .contact-info {
+      text-align: center;
+      margin-top: 50px;
+      padding: 20px;
+      background: #f8f9f3;
+      border-top: 1px solid #ccc;
+    }
+
+    .contact-info p {
+      margin-bottom: 10px;
+      font-size: 1.2em;
+      color: #2e2e2e;
+    }
+
+    .contact-info a {
+      text-decoration: none;
+      color: #416619;
+      font-size: 1.2em;
+      font-weight: bold;
+      margin: 0 10px;
+      display: inline-block;
+    }
+
+    .contact-info a:hover {
+      color: #314a14;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>فۆرمی داواکردنی خواردن</h1>
+  <div id="app">
+    <div class="form-group">
+      <label for="groupSize">ژمارەی کەسەکان (کەمترین ٢):</label>
+      <input type="number" id="groupSize" min="2" value="2">
+    </div>
+
+    <div class="form-group">
+      <label>هەڵبژاردنی ڕۆژەکانی دابینکردن (کەمترین ٣):</label>
+      <div id="daysContainer" class="grid">
+        <button type="button" class="day-toggle" data-value="شەممە">شەممە</button>
+        <button type="button" class="day-toggle" data-value="یەکشەممە">یەکشەممە</button>
+        <button type="button" class="day-toggle" data-value="دووشەممە">دووشەممە</button>
+        <button type="button" class="day-toggle" data-value="سێشەممە">سێشەممە</button>
+        <button type="button" class="day-toggle" data-value="چوارشەممە">چوارشەممە</button>
+        <button type="button" class="day-toggle" data-value="پێنجشەممە">پێنجشەممە</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="area">ناوچەی گەیاندن:</label>
+      <select id="area">
+        <option value="3000" selected>سلێمانی - ٣٠٠٠</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="address">ناونیشانی ورد:</label>
+      <input type="text" id="address" placeholder="ناونیشانی ورد بنووسە">
+    </div>
+
+    <div class="form-group">
+      <label for="time">کاتى گەیاندن:</label>
+      <select id="time" class="time-select">
+        <option value="12:00">12:00</option>
+        <option value="12:30">12:30</option>
+        <option value="1:00">1:00</option>
+        <option value="1:30">1:30</option>
+        <option class="separator" disabled>────────────</option>
+        <option value="17:00">17:00</option>
+        <option value="17:30">17:30</option>
+        <option value="18:00">18:00</option>
+        <option value="18:30">18:30</option>
+      </select>
+    </div>
+
+    <button onclick="generateForm()">دروستکردنی فۆرمی خواردن</button>
+  </div>
+
+  <div id="mealForm" style="display:none;">
+    <h2>هەڵبژاردنی خواردنەکان</h2>
+    <form id="mealSelection"></form>
+    <button onclick="calculateTotal()">هەژمارکردنی کۆی گشتی</button>
+  </div>
+
+  <div class="output" id="output"></div>
+
+  <div id="userDetails" style="display:none; margin-top: 20px;">
+    <h2>زانیاری کەسی</h2>
+    <div class="form-group">
+      <label for="userName">ناو:</label>
+      <input type="text" id="userName" placeholder="ناوت بنووسە">
+    </div>
+    <div class="form-group">
+      <label for="userPhone">ژمارەی تەلەفۆن:</label>
+      <input type="tel" id="userPhone" placeholder="ژمارەی تەلەفۆن بنووسە">
+    </div>
+    <button onclick="downloadWebshot()">وێنەی فۆرم دابگرە و بۆمان بنێرە 👇</button>
+  </div>
+
+  <div class="contact-info">
+    <p>بۆ پەیوەندیکردن پەنجە بنێ بە:</p>
+    <a href="https://wa.me/9647712555351" target="_blank">واتساپ: 07712555351</a><br>
+    <a href="https://instagram.com/kawgir_" target="_blank">Kawgir_ Instagram</a>
+  </div>
+
+  <script>
+    document.querySelectorAll('.day-toggle').forEach(button => {
+      button.addEventListener('click', () => {
+        button.classList.toggle('active');
+      });
+    });
+
+    function getSelectedDays() {
+      return Array.from(document.querySelectorAll('.day-toggle.active')).map(button => button.dataset.value);
+    }
+
+    function generateForm() {
+      const groupSize = parseInt(document.getElementById('groupSize').value);
+      const days = getSelectedDays();
+      const mealForm = document.getElementById('mealForm');
+      const form = document.getElementById('mealSelection');
+
+      if (groupSize < 2) {
+        alert('ژمارەی کەسەکان دەبێت بەرزتر بێت لە ٢.');
+        return;
+      }
+
+      if (days.length < 3) {
+        alert('تکایە کەمتر لە ٣ ڕۆژ هەڵمەژرە.');
+        return;
+      }
+
+      mealForm.style.display = 'block';
+      form.innerHTML = '';
+
+      days.forEach(day => {
+        form.innerHTML += `<h3>${day}</h3>`;
+        for (let i = 1; i <= groupSize; i++) {
+          form.innerHTML += `
+            <div class="form-group">
+              <label>خواردنی کەسی ${i} بۆ ${day}:</label>
+              <select class="meal" data-day="${day}" data-person="${i}">
+                <option value="3500">سادە - ٣٥٠٠</option>
+                <option value="5500">مریشک - ٥٥٠٠</option>
+                <option value="7750">گۆشت - ٧٧٥٠</option>
+              </select>
+            </div>
+          `;
+        }
+      });
+    }
+
+    function calculateTotal() {
+      const groupSize = parseInt(document.getElementById('groupSize').value);
+      const meals = document.querySelectorAll('.meal');
+      const areaCost = parseInt(document.getElementById('area').value);
+      const days = getSelectedDays();
+      let mealCost = 0;
+
+      meals.forEach(meal => {
+        mealCost += parseInt(meal.value);
+      });
+
+      const deliveryCost = areaCost * days.length;
+      const costPerPerson = (deliveryCost / groupSize).toFixed(2);
+
+      document.getElementById('output').innerHTML = `
+        کۆی نرخی خواردنەکان: ${mealCost} دینار <br>
+        کۆی نرخی گەیاندن بۆ سەرجەم ڕۆژەکان: ${deliveryCost} دینار <br>
+        نرخی گەیاندن بۆ هەر کەسێک: ${costPerPerson} دینار <br>
+        <strong>کۆی گشتی: ${mealCost + deliveryCost} دینار</strong>
+      `;
+
+      document.getElementById('userDetails').style.display = 'block';
+    }
+
+    function downloadWebshot() {
+      html2canvas(document.body).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'form_screenshot.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    }
+  </script>
+</body>
+</html>
