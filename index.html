@@ -176,9 +176,28 @@
       color: #314a14;
       text-decoration: underline;
     }
+
+    .logo-container {
+      position: absolute; /* Place logo at the top-left */
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+    }
+
+    .logo {
+      width: 100px; /* Set logo width */
+      height: auto; /* Maintain aspect ratio */
+
+    }
+    
   </style>
 </head>
 <body>
+<div class="logo-container">
+  <img src="kawgir logo2.png" alt="Logo" class="logo">
+</div>
+
+
   <h1>فۆرمی داواکردنی خواردن</h1>
   <div id="app">
     <div class="form-group">
