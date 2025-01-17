@@ -266,7 +266,7 @@
       <label for="userPhone">ژمارەی تەلەفۆن:</label>
       <input type="tel" id="userPhone" placeholder="ژمارەی تەلەفۆن بنووسە">
     </div>
-    <button onclick="downloadWebshot()">وێنەی فۆرم دابگرە و بۆمان بنێرە 👇</button>
+    <button onclick="downloadWebshot()">فۆرم دابگرە و بۆمان بنێرە 👇</button>
   </div>
 
   <div class="contact-info">
@@ -322,15 +322,25 @@
       });
     }
 
-    function calculateTotal() {
+   function calculateTotal() {
   const groupSize = parseInt(document.getElementById('groupSize').value);
   const meals = document.querySelectorAll('.meal');
   const areaCost = parseInt(document.getElementById('area').value);
   const days = getSelectedDays();
   let mealCost = 0;
+  const personCosts = {}; // Store each person's total cost
 
+  // Initialize each person's cost
+  for (let i = 1; i <= groupSize; i++) {
+    personCosts[i] = 0;
+  }
+
+  // Calculate meal cost for each person
   meals.forEach(meal => {
-    mealCost += parseInt(meal.value);
+    const person = meal.getAttribute('data-person');
+    const mealPrice = parseInt(meal.value);
+    mealCost += mealPrice;
+    personCosts[person] += mealPrice; // Add meal price to the respective person's total
   });
 
   const deliveryCost = areaCost * days.length;
@@ -342,11 +352,20 @@
   const formattedCostPerPerson = parseFloat(costPerPerson).toLocaleString();
   const totalCost = (mealCost + deliveryCost).toLocaleString();
 
+  // Build the output string for individual costs
+  let personCostOutput = '';
+  for (let i = 1; i <= groupSize; i++) {
+    const formattedPersonCost = personCosts[i].toLocaleString();
+    personCostOutput += `نرخی خواردنی کەسی ${i}: ${formattedPersonCost} دینار<br>`;
+  }
+
+  // Display the total and individual costs
   document.getElementById('output').innerHTML = `
-    کۆی نرخی خواردنەکان + دوو شلە: ${formattedMealCost} دینار <br>
+    کۆی نرخی خواردنەکان: ${formattedMealCost} دینار <br>
     کۆی نرخی گەیاندن بۆ سەرجەم ڕۆژەکان: ${formattedDeliveryCost} دینار <br>
     نرخی گەیاندن بۆ هەر کەسێک: ${formattedCostPerPerson} دینار <br>
-    <strong>کۆی گشتی: ${totalCost} دینار</strong>
+    <strong>کۆی گشتی: ${totalCost} دینار</strong> <br><br>
+    ${personCostOutput}
   `;
 
   document.getElementById('userDetails').style.display = 'block';
@@ -373,7 +392,7 @@
       }
     }
 
-    pdf.save('form_screenshot.pdf');
+    pdf.save('kawgir_form.pdf');
   });
 }
 
