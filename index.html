@@ -275,16 +275,16 @@ button:hover {
 
     // Calculate the total meal cost and count delivery days
     meals.forEach(meal => {
-      const mealPrice = parseInt(meal.value);
-      if (mealPrice > 0) {
-        mealCost += mealPrice;
-        deliveryDays++;
-      }
+        const mealPrice = parseInt(meal.value);
+        if (mealPrice > 0) {
+            mealCost += mealPrice;
+            deliveryDays++;
+        }
     });
 
     if (deliveryDays < 3) {
-      alert('ببورن، پێویستە بە لانی کەمەوە بۆ ٣ ڕۆژ خواردن داوا بکەن.');
-      return;
+        alert('ببورن، پێویستە بە لانی کەمەوە بۆ ٣ ڕۆژ خواردن داوا بکەن.');
+        return;
     }
 
     const deliveryCost = deliveryDays * areaCost;
@@ -292,14 +292,20 @@ button:hover {
     const costPerPerson = (totalCost / groupSize).toFixed(2);
 
     document.getElementById('output').innerHTML = `
-      کۆی نرخی خواردنەکان: ${mealCost.toLocaleString()} دینار <br>
-      کۆی نرخی گەیاندن بۆ سەرجەم ئەو رۆژانەی خواردن داوا کراوە: ${deliveryCost.toLocaleString()} دینار <br>
-      کۆی گشتی: ${totalCost.toLocaleString()} دینار <br>
-      کۆی تێچوو لەسەر هەر کەسێک : ${parseFloat(costPerPerson).toLocaleString()} دینار
+        کۆی نرخی خواردنەکان: ${mealCost.toLocaleString()} دینار <br>
+        کۆی نرخی گەیاندن بۆ سەرجەم ئەو رۆژانەی خواردن داوا کراوە: ${deliveryCost.toLocaleString()} دینار <br>
+        کۆی گشتی: ${totalCost.toLocaleString()} دینار <br>
+        کۆی تێچوو لەسەر هەر کەسێک : ${parseFloat(costPerPerson).toLocaleString()} دینار
     `;
 
     document.getElementById('userInfoSection').style.display = 'block';
-  }
+
+    // Scroll down by half the screen height
+    window.scrollBy({
+        top: window.innerHeight / 1.5,
+        behavior: 'smooth'
+    });
+}
 
   // Submit Data to Google Sheets
   document.getElementById('submitData').addEventListener('click', () => {
